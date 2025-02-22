@@ -48,6 +48,33 @@ authRouter.post("/signup", async (req: Request<{}, {}, SignUpBody>, res: Respons
     }
 });
 
+authRouter.post("/signin", async (req: Request<{}, {}, SignInBody>, res: Response) => {
+    try {
+        // get req body
+       const { email, password} =  req.body;
+
+        // check if user already exists
+        const existingUser = await db.select().from(users).where(eq(users.email, email));
+        if (!existingUser) {
+            res.status(400).json({ error: "User with this email does not exist!" });
+            return;
+        } 
+
+        // check if password is correct
+        const isPasswordValid = await bcryptjs.compare(password, existingUser[0].password)
+        if (!isPasswordValid) {
+            res.status(400).json({ error: "Incorrect password!" });
+            return;
+        }
+
+        res.json(existingUser);
+        
+
+    } catch (error) {
+        res.status(500).json({ error: error });
+    }
+});
+
 
 authRouter.get("/", (req, res) => {
     res.send("Hey there! from auth");
