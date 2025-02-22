@@ -12,6 +12,12 @@ interface SignUpBody {
     password: string;
 }
 
+interface SignInBody {
+    email: string;
+    password: string;
+}
+
+
 authRouter.post("/signup", async (req: Request<{}, {}, SignUpBody>, res: Response) => {
     try {
         // get req body
@@ -41,6 +47,7 @@ authRouter.post("/signup", async (req: Request<{}, {}, SignUpBody>, res: Respons
         res.status(500).json({ error: error });
     }
 });
+
 
 authRouter.get("/", (req, res) => {
     res.send("Hey there! from auth");
